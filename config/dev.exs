@@ -2,9 +2,9 @@ import Config
 
 # Configure your database
 config :simple_chat, SimpleChat.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
+  username: System.get_env("DB_USER"),
+  password: System.get_env("DB_PASS"),
+  hostname: System.get_env("DB_HOST"),
   database: "simple_chat_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
