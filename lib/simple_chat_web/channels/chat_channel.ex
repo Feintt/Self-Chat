@@ -21,7 +21,8 @@ defmodule SimpleChatWeb.ChatChannel do
   # broadcast to everyone in the current topic (chat:lobby).
   @impl true
   def handle_in("shout", payload, socket) do
-    broadcast(socket, "shout", payload)
+    SimpleChat.Chat.create_message(payload)
+    broadcast!(socket, "shout", payload)
     {:noreply, socket}
   end
 
