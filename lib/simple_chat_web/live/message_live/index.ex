@@ -2,46 +2,32 @@ defmodule SimpleChatWeb.MessageLive.Index do
   use SimpleChatWeb, :live_view
 
   alias SimpleChat.Chat
-  alias SimpleChat.Chat.Message
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :messages, Chat.list_messages())}
+    if connected?(socket) do
+      SimpleChatWeb.Endpoint.subscribe("chat")
+    end
+
+    {:ok, assign(socket, username: username(socket), messages: [])}
   end
 
   @impl true
-  def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
-  end
-
-  defp apply_action(socket, :edit, %{"id" => id}) do
-    socket
-    |> assign(:page_title, "Edit Message")
-    |> assign(:message, Chat.get_message!(id))
-  end
-
-  defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:page_title, "New Message")
-    |> assign(:message, %Message{})
-  end
-
-  defp apply_action(socket, :index, _params) do
-    socket
-    |> assign(:page_title, "Listing Messages")
-    |> assign(:message, nil)
+  def handle_info(%{event: "message", payload: message}, socket) do
+    {:noreply, assign(socket, messages: socket.assigns.messages ++ [message])}
   end
 
   @impl true
-  def handle_info({SimpleChatWeb.MessageLive.FormComponent, {:saved, message}}, socket) do
-    {:noreply, stream_insert(socket, :messages, message)}
+  def handle_event("send", %{"text" => text}, socket) do
+    SimpleChatWeb.Endpoint.broadcast("chat", "message", %{
+      text: text,
+      name: socket.assigns.username
+    })
+
+    {:noreply, socket}
   end
 
-  @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    message = Chat.get_message!(id)
-    {:ok, _} = Chat.delete_message(message)
-
-    {:noreply, stream_delete(socket, :messages, message)}
+  defp username(socket) do
+    socket.assigns.current_user.id
   end
 end
