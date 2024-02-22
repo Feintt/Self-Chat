@@ -3,8 +3,8 @@
   <div class="messages" style="border: 1px solid #eee; height: 400px; overflow: scroll; margin-bottom: 8px;">
     <%= for m <- @messages do %>
       <p style="margin: 2px;"><b>
-          <%= m.name %>
-        </b>: <%= m.text %>
+          <%= assigns.username %>
+        </b>: <%= m %>
       </p>
       <% end %>
   </div>
