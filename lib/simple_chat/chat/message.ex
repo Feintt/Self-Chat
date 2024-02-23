@@ -14,7 +14,7 @@ defmodule SimpleChat.Chat.Message do
   @doc false
   def changeset(message, attrs) do
     message
-    |> cast(attrs, [:content])
+    |> cast(attrs, [:content, :user_id])
     |> validate_required([:content])
   end
 end

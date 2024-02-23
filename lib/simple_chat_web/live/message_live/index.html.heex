@@ -1,10 +1,11 @@
 <div>
   <h1>ChatLive</h1>
-  <div class="messages" style="border: 1px solid #eee; height: 400px; overflow: scroll; margin-bottom: 8px;">
+  <div class="messages" id="chat_box" phx-hook="ScrollToBottom"
+    style="border: 1px solid #eee; height: 400px; overflow: scroll; margin-bottom: 8px;">
     <%= for m <- @messages do %>
       <p style="margin: 2px;"><b>
-          <%= assigns.username %>
-        </b>: <%= m %>
+          <%= m.sent_by %>
+        </b>: <%= m.content %>
       </p>
       <% end %>
   </div>
