@@ -60,6 +60,14 @@ defmodule SimpleChat.Accounts do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
+  ## Update username
+
+  def update_user_name(user, attrs) do
+    user
+    |> User.change_user_name(attrs)
+    |> Repo.update()
+  end
+
   ## User registration
 
   @doc """
@@ -185,6 +193,10 @@ defmodule SimpleChat.Accounts do
   """
   def change_user_password(user, attrs \\ %{}) do
     User.password_changeset(user, attrs, hash_password: false)
+  end
+
+  def change_user_name(user, attrs \\ %{}) do
+    User.name_changeset(user, attrs)
   end
 
   @doc """

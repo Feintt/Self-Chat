@@ -8,6 +8,7 @@ defmodule SimpleChat.Accounts.User do
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
+    field :name, :string, default: "Anonymous"
 
     timestamps(type: :utc_datetime)
   end
@@ -37,9 +38,10 @@ defmodule SimpleChat.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password])
+    |> cast(attrs, [:email, :password, :name])
     |> validate_email(opts)
     |> validate_password(opts)
+    |> validate_name(opts)
   end
 
   defp validate_email(changeset, opts) do
@@ -59,6 +61,11 @@ defmodule SimpleChat.Accounts.User do
     # |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")
     # |> validate_format(:password, ~r/[!?@#$%^&*_0-9]/, message: "at least one digit or punctuation character")
     |> maybe_hash_password(opts)
+  end
+
+  defp validate_name(changeset, _opts) do
+    # Validations for username could be added here
+    changeset
   end
 
   defp maybe_hash_password(changeset, opts) do
@@ -122,6 +129,12 @@ defmodule SimpleChat.Accounts.User do
     |> validate_password(opts)
   end
 
+  def name_changeset(user, attrs, _opts \\ []) do
+    user
+    |> cast(attrs, [:name])
+    |> validate_length(:name, max: 100)
+  end
+
   @doc """
   Confirms the account by setting `confirmed_at`.
   """
@@ -155,5 +168,11 @@ defmodule SimpleChat.Accounts.User do
     else
       add_error(changeset, :current_password, "is not valid")
     end
+  end
+
+  def change_user_name(user, attrs) do
+    user
+    |> cast(attrs, [:name])
+    |> validate_length(:name, max: 100)
   end
 end

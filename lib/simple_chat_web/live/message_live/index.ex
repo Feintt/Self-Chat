@@ -13,9 +13,9 @@ defmodule SimpleChatWeb.MessageLive.Index do
     messages = Chat.list_messages()
 
     content_list =
-      Enum.map(messages, &%{content: &1.content, sent_by: username({:user_id, &1.user_id})})
+      Enum.map(messages, &%{content: &1.content, sent_by: username(%{user_id: &1.user_id})})
 
-    {:ok, assign(socket, username: username({:socket, socket}), messages: content_list)}
+    {:ok, assign(socket, username: username(%{socket: socket}), messages: content_list)}
   end
 
   @impl true
@@ -30,18 +30,18 @@ defmodule SimpleChatWeb.MessageLive.Index do
       Chat.create_message(%{content: text, user_id: socket.assigns.current_user.id})
 
     SimpleChatWeb.Endpoint.broadcast("chat", "message", %{
-      sent_by: username({:user_id, message.user_id}),
+      sent_by: username(%{user_id: message.user_id}),
       content: message.content
     })
 
     {:noreply, socket}
   end
 
-  defp username({:socket, socket}) do
-    Accounts.get_user!(socket.assigns.current_user.id).email
+  defp username(%{socket: socket}) do
+    Accounts.get_user!(socket.assigns.current_user.id).name
   end
 
-  defp username({:user_id, user_id}) do
-    Accounts.get_user!(user_id).email
+  defp username(%{user_id: user_id}) do
+    Accounts.get_user!(user_id).name
   end
 end

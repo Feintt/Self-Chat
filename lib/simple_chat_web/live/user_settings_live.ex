@@ -12,6 +12,14 @@ defmodule SimpleChatWeb.UserSettingsLive do
 
     <div class="space-y-12 divide-y">
       <div>
+        <.simple_form for={@name_form} id="name_form" phx-submit="update_name">
+          <.input field={@name_form[:name]} type="text" label="Name" />
+          <:actions>
+            <.button phx-disable-with="Updating...">Update Name</.button>
+          </:actions>
+        </.simple_form>
+      </div>
+      <div>
         <.simple_form
           for={@email_form}
           id="email_form"
@@ -90,6 +98,7 @@ defmodule SimpleChatWeb.UserSettingsLive do
     user = socket.assigns.current_user
     email_changeset = Accounts.change_user_email(user)
     password_changeset = Accounts.change_user_password(user)
+    name_changeset = Accounts.change_user_name(user)
 
     socket =
       socket
@@ -98,6 +107,7 @@ defmodule SimpleChatWeb.UserSettingsLive do
       |> assign(:current_email, user.email)
       |> assign(:email_form, to_form(email_changeset))
       |> assign(:password_form, to_form(password_changeset))
+      |> assign(:name_form, to_form(name_changeset))
       |> assign(:trigger_submit, false)
 
     {:ok, socket}
@@ -135,16 +145,24 @@ defmodule SimpleChatWeb.UserSettingsLive do
     end
   end
 
-  def handle_event("validate_password", params, socket) do
-    %{"current_password" => password, "user" => user_params} = params
+  def handle_event("update_name", params, socket) do
+    user = socket.assigns.current_user
+    name_params = Map.get(params, "user", %{})
 
-    password_form =
-      socket.assigns.current_user
-      |> Accounts.change_user_password(user_params)
-      |> Map.put(:action, :validate)
-      |> to_form()
+    socket =
+      case Accounts.update_user_name(user, name_params) do
+        {:ok, user} ->
+          socket
+          |> put_flash(:info, "Username changed successfully.")
+          |> assign(:name_form, to_form(Accounts.change_user_name(user)))
 
-    {:noreply, assign(socket, password_form: password_form, current_password: password)}
+        {:error, _changeset} ->
+          socket
+          |> put_flash(:error, "Something went wrong. Please try again.")
+          |> assign(:name_form, to_form(Accounts.change_user_name(user)))
+      end
+
+    {:noreply, socket}
   end
 
   def handle_event("update_password", params, socket) do
@@ -163,5 +181,17 @@ defmodule SimpleChatWeb.UserSettingsLive do
       {:error, changeset} ->
         {:noreply, assign(socket, password_form: to_form(changeset))}
     end
+  end
+
+  def handle_event("validate_password", params, socket) do
+    %{"current_password" => password, "user" => user_params} = params
+
+    password_form =
+      socket.assigns.current_user
+      |> Accounts.change_user_password(user_params)
+      |> Map.put(:action, :validate)
+      |> to_form()
+
+    {:noreply, assign(socket, password_form: password_form, current_password: password)}
   end
 end
