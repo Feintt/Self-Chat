@@ -1,16 +1,34 @@
-<div>
-  <h1>ChatLive</h1>
-  <div class="messages" id="chat_box" phx-hook="ScrollToBottom"
-    style="border: 1px solid #eee; height: 400px; overflow: scroll; margin-bottom: 8px;">
+<div class="chat-app">
+  <header class="chat-header">
+    <h1>ChatLive</h1>
+  </header>
+  <div class="chat-messages" id="chat_box" phx-hook="ScrollToBottom">
     <%= for m <- @messages do %>
-      <p style="margin: 2px;"><b>
-          <%= m.sent_by %>
-        </b>: <%= m.content %>
-      </p>
-      <% end %>
+      <%= if m.sent_by_id==@current_user.id do %>
+        <div class="message message-current-user">
+          <span class="message-sender">
+            <%= m.sent_by %>:
+          </span>
+          <span class="message-content">
+            <%= m.content %>
+          </span>
+        </div>
+        <% else %>
+          <div class="message message-other-user">
+            <span class="message-sender">
+              <%= m.sent_by %>:
+            </span>
+            <span class="message-content">
+              <%= m.content %>
+            </span>
+          </div>
+          <% end %>
+            <% end %>
+
+
   </div>
-  <form phx-submit="send">
-    <input type="text" name="text" />
-    <button type="submit">Send</button>
+  <form class="chat-form" phx-submit="send">
+    <input type="text" name="text" class="chat-input" placeholder="Type a message..." />
+    <button type="submit" class="chat-send">Send</button>
   </form>
 </div>

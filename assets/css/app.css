@@ -3,3 +3,102 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+
+.chat-app {
+  font-family: 'Arial', sans-serif;
+  max-width: 600px;
+  margin: 20px auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.chat-header {
+  background-color: #075E54;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+}
+
+.chat-messages {
+  height: 400px;
+  overflow: auto;
+  background-color: #ECE5DD;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.message {
+  margin: 5px 0;
+}
+
+.message-sender {
+  font-weight: bold;
+}
+
+.message-content {
+  margin-left: 5px;
+}
+
+.chat-form {
+  display: flex;
+  padding: 10px;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 10px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.chat-send {
+  background-color: #075E54;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.chat-send:hover {
+  background-color: #064C43;
+}
+
+.message {
+  display: flex;
+  justify-content: flex-start;
+  /* Default alignment for other users */
+  padding: 5px;
+}
+
+.message-current-user {
+  justify-content: flex-end;
+  /* Aligns current user messages to the right */
+  background-color: #DCF8C6;
+  /* Optional: Different background for current user's messages */
+}
+
+.message-other-user {
+  justify-content: flex-start;
+  /* Ensures other messages align to the left */
+}
+
+.message-content,
+.message-sender {
+  padding: 2px 5px;
+}
+
+/* Additional styling for better readability */
+.message-sender {
+  font-weight: bold;
+}
+
+.message-content {
+  background-color: #e5e5ea;
+  border-radius: 15px;
+  padding: 5px 10px;
+  margin-left: 5px;
+  /* Only for message-content for visual separation */
+}

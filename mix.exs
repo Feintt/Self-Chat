@@ -19,7 +19,7 @@ defmodule SimpleChat.MixProject do
   def application do
     [
       mod: {SimpleChat.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :os_mon]
     ]
   end
 
